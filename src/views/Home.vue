@@ -106,7 +106,7 @@ import * as util from "@/util/util.js";
 import { ref, reactive, onMounted } from "@vue/composition-api";
 export default {
   name: "Home",
-  setup(props, ctx) {
+  setup(props, { root, refs }) {
     const tabType = ref("all");
     const liItems = reactive([
       { text: "全部", isChecked: true, tab: "all" },
@@ -126,7 +126,7 @@ export default {
           item.isChecked = false;
         }
       });
-      prevTab != tabType.value ? ctx.refs.pagination.paginateChecked(1) : "";
+      prevTab != tabType.value ? refs.pagination.paginateChecked(1) : "";
     };
     const pageChanged = currentPage => {
       getHomeData(tabType.value, currentPage);
@@ -152,10 +152,10 @@ export default {
         });
     };
     const jumpToUser = user => {
-      console.log(user);
+      root.$router.push(`/user/${user}`);
     };
     const jumpToThemeDetails = (id, title) => {
-      console.log(title);
+      root.$router.push(`/topic/${id}`);
     };
     onMounted(() => {
       getHomeData("all", 1);
