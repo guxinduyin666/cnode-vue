@@ -73,22 +73,27 @@
         </div>
       </div>
     </div>
+    <loading :isShowLoading="isShowLoading" />
   </div>
 </template>
 
 <script>
+import loading from "@/components/Loading.vue";
 import http from "axios";
 export default {
   name: "theme",
   data() {
     return {
-      themeDetails: {}
+      themeDetails: {},
+      isShowLoading: false
     };
   },
   methods: {
     getDetails() {
       const userId = this.$route.params.id;
+      this.isShowLoading = true;
       http.get(`https://cnodejs.org/api/v1/topic/${userId}`).then(resp => {
+        this.isShowLoading = false
         if (resp.status == 200 && resp.data) {
           this.themeDetails = resp.data.data;
         }
@@ -103,7 +108,8 @@ export default {
   },
   activated() {
     this.getDetails();
-  }
+  },
+  components: { loading }
 };
 </script>
 

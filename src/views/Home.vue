@@ -94,6 +94,7 @@
       </div>
       <tag></tag>
     </div>
+    <loading :isShowLoading="isShowLoading" />
   </div>
 </template>
 
@@ -101,6 +102,7 @@
 import github from "@/components/Github.vue";
 import tag from "@/components/Tag.vue";
 import pagination from "@/components/Pagination.vue";
+import loading from "@/components/Loading.vue";
 import http from "axios";
 import * as util from "@/util/util.js";
 import { ref, reactive, onMounted } from "@vue/composition-api";
@@ -108,6 +110,7 @@ export default {
   name: "Home",
   setup(props, { root, refs }) {
     const tabType = ref("all");
+    const isShowLoading = ref(false);
     const liItems = reactive([
       { text: "全部", isChecked: true, tab: "all" },
       { text: "精华", isChecked: false, tab: "good" },
@@ -139,11 +142,13 @@ export default {
     };
     const getHomeData = (tab, page, limit = 46) => {
       homeData.length = 0;
+      isShowLoading.value = true;
       http
         .get("https://cnodejs.org/api/v1/topics", {
           params: { tab, page, limit }
         })
         .then(res => {
+          isShowLoading.value = false;
           if (res.status == 200 && res.data && Array.isArray(res.data.data)) {
             let data = res.data.data;
             homeData.push(...data);
@@ -162,6 +167,7 @@ export default {
     });
     return {
       tabType,
+      isShowLoading,
       pageChanged,
       liItems,
       homeData,
@@ -170,7 +176,7 @@ export default {
       jumpToThemeDetails
     };
   },
-  components: { tag, github, pagination }
+  components: { tag, github, pagination, loading }
 };
 </script>
 

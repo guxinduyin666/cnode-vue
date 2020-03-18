@@ -79,16 +79,18 @@
       </div>
       <tag></tag>
     </div>
+    <loading :isShowLoading="isShowLoading" />
   </div>
 </template>
 
 <script>
 import tag from "@/components/Tag.vue";
+import loading from "@/components/Loading.vue";
 import http from "axios";
 import { ref, reactive } from "@vue/composition-api";
 export default {
   name: "user",
-  components: { tag },
+  components: { tag, loading },
   mounted() {
     this.getUserData();
   },
@@ -98,7 +100,9 @@ export default {
   methods: {
     getUserData() {
       const userName = this.$route.params.name;
+      this.isShowLoading = true;
       http.get(`https://cnodejs.org/api/v1/user/${userName}`).then(resp => {
+        this.isShowLoading = false;
         if (resp.status == 200 && resp.data) {
           this.userData = resp.data.data;
         }
@@ -107,6 +111,7 @@ export default {
   },
   setup(props, { root }) {
     const userData = reactive({});
+    const isShowLoading = ref(false);
     const goToHome = () => {
       root.$router.push("/");
     };
@@ -119,7 +124,13 @@ export default {
       root.$router.push(`/topic/${id}`);
     };
 
-    return { userData, goToHome, jumpToUser, jumpToThemeDetails };
+    return {
+      userData,
+      goToHome,
+      jumpToUser,
+      jumpToThemeDetails,
+      isShowLoading
+    };
   }
 };
 </script>
