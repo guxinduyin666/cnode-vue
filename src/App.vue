@@ -78,7 +78,17 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
+.clearfix:after {
+  content: "\20";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+}
 
+.clearfix {
+  *zoom: 1;
+}
 @media screen and (max-width: 979px) {
   .media-cancel-style {
     width: 100%;
