@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="footer-ul">
-        <pagination :pageCount="20" @pageChange="pageChanged" />
+        <pagination :pageCount="20" @pageChange="pageChanged" ref="pagination" />
       </div>
     </div>
     <div class="sidebar hide">
@@ -101,10 +101,12 @@
 import github from "@/components/Github.vue";
 import tag from "@/components/Tag.vue";
 import pagination from "@/components/Pagination.vue";
-import { ref, reactive } from "@vue/composition-api";
+import http from "axios";
+import * as util from "@/util/util.js";
+import { ref, reactive, onMounted } from "@vue/composition-api";
 export default {
   name: "Home",
-  setup() {
+  setup(props, ctx) {
     const tabType = ref("all");
     const liItems = reactive([
       { text: "全部", isChecked: true, tab: "all" },
@@ -114,14 +116,58 @@ export default {
       { text: "招聘", isChecked: false, tab: "job" }
     ]);
     const homeData = reactive([]);
-    const pageChanged = currentPage => {
-      console.log(currentPage);
+    const changeChecked = text => {
+      let prevTab = tabType.value;
+      liItems.forEach(item => {
+        if (text == item.text) {
+          item.isChecked = true;
+          tabType.value = item.tab;
+        } else {
+          item.isChecked = false;
+        }
+      });
+      prevTab != tabType.value ? ctx.refs.pagination.paginateChecked(1) : "";
     };
+    const pageChanged = currentPage => {
+      getHomeData(tabType.value, currentPage);
+    };
+    const changeHomeData = data => {
+      data.forEach(item => {
+        item.reply = util.countDate(item.last_reply_at);
+        item.isActive = false;
+      });
+    };
+    const getHomeData = (tab, page, limit = 46) => {
+      homeData.length = 0;
+      http
+        .get("https://cnodejs.org/api/v1/topics", {
+          params: { tab, page, limit }
+        })
+        .then(res => {
+          if (res.status == 200 && res.data && Array.isArray(res.data.data)) {
+            let data = res.data.data;
+            homeData.push(...data);
+            changeHomeData(homeData);
+          }
+        });
+    };
+    const jumpToUser = user => {
+      console.log(user);
+    };
+    const jumpToThemeDetails = (id, title) => {
+      console.log(title);
+    };
+    onMounted(() => {
+      getHomeData("all", 1);
+    });
     return {
       tabType,
       pageChanged,
       liItems,
-      homeData
+      homeData,
+      changeChecked,
+      jumpToUser,
+      jumpToThemeDetails
     };
   },
   components: { tag, github, pagination }
