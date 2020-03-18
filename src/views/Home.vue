@@ -153,6 +153,7 @@ export default {
             let data = res.data.data;
             homeData.push(...data);
             changeHomeData(homeData);
+            window.scrollTo(0, 0);
           }
         });
     };

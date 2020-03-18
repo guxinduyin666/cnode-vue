@@ -117,10 +117,8 @@ export default {
     };
     const jumpToUser = () => {
       root.$router.push(`/user/${loginname}`);
-      document.body.scrollTop = 0;
     };
     const jumpToThemeDetails = id => {
-      document.body.scrollTop = 0;
       root.$router.push(`/topic/${id}`);
     };
 
