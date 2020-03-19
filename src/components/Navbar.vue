@@ -8,14 +8,14 @@
         </form>
       </div>
       <ul class="right-ul">
-        <li @click="jumpToHome">首页</li>
-        <li @click="jumpToNoob">新手入门</li>
-        <li @click="jumpToApi">API</li>
-        <li @click="jumpToAbout">关于</li>
+        <li @click="jumpToHome" :class="{active:currentIndex==1}">首页</li>
+        <li @click="jumpToNoob" :class="{active:currentIndex==2}">新手入门</li>
+        <li @click="jumpToApi" :class="{active:currentIndex==3}">API</li>
+        <li @click="jumpToAbout" :class="{active:currentIndex==4}">关于</li>
         <li class="register">
           <a href="https://github.com">注册</a>
         </li>
-        <li @click="jumpToLogin">登录</li>
+        <li @click="jumpToLogin" :class="{active:currentIndex==5}">登录</li>
       </ul>
     </div>
   </div>
@@ -26,9 +26,16 @@ import { ref } from "@vue/composition-api";
 export default {
   name: "Navbar",
   setup(props, { root }) {
-    let searchText = ref("");
-    const onSearch = searchText => {
-      console.log(searchText);
+    const searchText = ref("");
+    const currentIndex = ref(1);
+    const onSearch = () => {
+      let data = BaiduHttps.useHttps();
+      if (data.s === 0) {
+      } else {
+        formname.action =
+          "https://www.baidu.com/baidu" + "?ssl_s=1&ssl_c" + data.ssl_code;
+      }
+      return true;
     };
     const jumpToHome = () => {
       root.$router.push("/");
@@ -47,6 +54,7 @@ export default {
     };
     return {
       searchText,
+      currentIndex,
       onSearch,
       jumpToHome,
       jumpToNoob,
@@ -54,6 +62,28 @@ export default {
       jumpToAbout,
       jumpToLogin
     };
+  },
+  watch: {
+    $route: function(to, from) {
+      const path = to.path;
+      switch (path) {
+        case "/getstart":
+          this.currentIndex = 2;
+          break;
+        case "/api":
+          this.currentIndex = 3;
+          break;
+        case "/about":
+          this.currentIndex = 4;
+          break;
+        case "/login":
+          this.currentIndex = 5;
+          break;
+        default:
+          this.currentIndex = 1;
+          break;
+      }
+    }
   }
 };
 </script>
@@ -118,6 +148,12 @@ export default {
 
         &:hover {
           color: #fff;
+        }
+      }
+      .active {
+        color: #ff6600;
+        &:hover {
+          color: #ff6600;
         }
       }
       .register {
