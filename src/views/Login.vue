@@ -46,13 +46,14 @@
 <script>
 export default {
   name: "login",
-  methods: {
-    jumpHome() {
-      this.$router.push("/");
-    },
-    forgetPassword() {
-      this.$router.push("/search_pass");
-    }
+  setup(props, { root }) {
+    const jumpHome = () => {
+      root.$router.push("/");
+    };
+    const forgetPassword = () => {
+      root.$router.push("/search_pass");
+    };
+    return { jumpHome, forgetPassword };
   }
 };
 </script>

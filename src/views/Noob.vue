@@ -144,10 +144,11 @@ export default {
     github,
     tag
   },
-  methods: {
-    jumpHome() {
-      this.$router.push("/");
-    }
+  setup(props, { root }) {
+    const jumpHome = () => {
+      root.$router.push("/");
+    };
+    return { jumpHome };
   }
 };
 </script>
